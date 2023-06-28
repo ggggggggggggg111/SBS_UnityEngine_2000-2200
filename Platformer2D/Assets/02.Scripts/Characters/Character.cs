@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public abstract class Character : MonoBehaviour,IHp
+public abstract class Character : MonoBehaviour, IHp
 {
     protected Movement movement;
     protected StateMachine stateMachine;
@@ -14,39 +14,46 @@ public abstract class Character : MonoBehaviour,IHp
         {
             if (_hp == value)
                 return;
+
             float prev = _hp;
             _hp = value;
 
-            OnHpChanged?.Invoke(value);
-            if(prev > value)
+            onHpChanged?.Invoke(value);
+            if (prev > value)
             {
-                OnHpDecreased?.Invoke(prev - value);
+                onHpDecreased?.Invoke(prev - value);
                 if (value <= _hpMin)
                 {
                     onHpMin?.Invoke();
+                    stateMachine.ChangeState(StateType.Die);
+                }
+                else
+                {
+                    stateMachine.ChangeState(StateType.Hurt);
                 }
             }
             else
             {
-                OnHpDecreased?.Invoke(value - prev);
-                if (value >=_hpMax)
+                onHpIncreased?.Invoke(value - prev);
+                if (value >= _hpMax)
                 {
                     onHpMax?.Invoke();
                 }
             }
         }
     }
+
     public float hpMin => _hpMin;
+
     public float hpMax => _hpMax;
 
-    
-     protected float _hp;
-     protected float _hpMin;
-    [SerializeField] protected float _hpMax;
+    private float _hp;
+    private float _hpMin;
+    [SerializeField] private float _hpMax;
 
-    public event Action<float> OnHpChanged;
-    public event Action<float> OnHpDecreased;
-    public event Action<float> OnHpIncreased;
+    public event Action<float> onHpChanged;
+    public event Action<float> onHpDecreased;
+    public event Action<float> onHpIncreased;
     public event Action onHpMin;
     public event Action onHpMax;
 
@@ -64,5 +71,15 @@ public abstract class Character : MonoBehaviour,IHp
     protected virtual void Start()
     {
         hp = hpMax;
+    }
+
+    public virtual void Damage(GameObject damager, float amout)
+    {
+        hp -= amout;
+    }
+
+    public virtual void Heal(GameObject healer, float amount)
+    {
+        hp += amount;
     }
 }

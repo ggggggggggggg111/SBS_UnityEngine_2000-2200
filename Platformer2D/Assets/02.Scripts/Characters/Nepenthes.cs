@@ -16,21 +16,25 @@ public class Nepenthes : Enemy
         {
             { StateType.Idle, new StateIdle(stateMachine) },
             { StateType.Move, new StateMove(stateMachine) },
-            {StateType.Attack, new StateAttack(stateMachine) },
+            { StateType.Attack, new StateAttack(stateMachine) },
+            { StateType.Hurt, new StateHurt(stateMachine) },
+            { StateType.Die,  new StateDie(stateMachine) },
         });
     }
+
     private void Hit()
     {
         Debug.Log($"Hit!");
         Collider2D target =
-         Physics2D.OverlapBox((Vector2)transform.position + new Vector2(_attackBoxCenter.x * movement.direction, _attackBoxCenter.y),
+        Physics2D.OverlapBox((Vector2)transform.position + new Vector2(_attackBoxCenter.x * movement.direction, _attackBoxCenter.y),
                              _attackBoxSize,
                              0.0f,
                              _attackTargetMask);
-        if(target &&
+
+        if (target &&
             target.TryGetComponent(out IHp iHp))
         {
-            iHp.hp -= _attackDamage;
+            iHp.Damage(gameObject, _attackDamage);
         }
     }
 
@@ -39,6 +43,6 @@ public class Nepenthes : Enemy
         int direction = movement ? movement.direction : 1;
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireCube(transform.position + new Vector3(_attackBoxCenter.x * direction, _attackBoxCenter.y, 0.0f),
-                        _attackBoxSize);
+                            _attackBoxSize);
     }
 }

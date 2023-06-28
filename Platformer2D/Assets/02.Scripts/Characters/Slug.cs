@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public class Slug : Enemy
 {
@@ -8,7 +8,9 @@ public class Slug : Enemy
         stateMachine.InitStates(new Dictionary<StateType, IStateEnumerator<StateType>>()
         {
             { StateType.Idle, new StateIdle(stateMachine) },
-            { StateType.Move, new StateMove(stateMachine) }
+            { StateType.Move, new StateMove(stateMachine) },
+            { StateType.Hurt, new StateHurt(stateMachine) },
+            { StateType.Die,  new StateDie(stateMachine) },
         });
     }
 }

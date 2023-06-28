@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public abstract class Movement : MonoBehaviour
@@ -35,8 +32,13 @@ public abstract class Movement : MonoBehaviour
         get => _horizontal;
         set
         {
+            if (isMovable == false)
+                return;
+
             if (_horizontal == value)
                 return;
+
+
 
             _horizontal = value;
             //onHorizontalChanged(value); // 직접호출 - 등록된 함수를 호출할때마다 인자를 직접참조
